@@ -23,6 +23,7 @@ import event8Img from './assets/event8.jpeg';
 import event9Img from './assets/event9.jpeg';
 import event10Img from './assets/event10.jpeg';
 import modelPhotoshootImg from './assets/modelphotoshoot.jpeg';
+import hamzasprofilepicImg from './assets/Hamzasprofilepic.jpeg';
 
 const portfolioImages = [
   { id: 1, url: coupleImg, category: 'Portrait', title: 'Golden Hour Couple' },
@@ -184,6 +185,9 @@ const PhotographerPortfolio = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             <motion.button
+              onClick={() => {
+                document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               whileHover={{ scale: 1.05, backgroundColor: '#78350f' }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 bg-amber-900 text-white rounded-full font-light tracking-wide flex items-center gap-2 shadow-lg shadow-amber-900/20"
@@ -337,14 +341,16 @@ const PhotographerPortfolio = () => {
               </p>
               <div className="flex gap-6">
                 <motion.a
-                  href="#"
+                  href="https://instagram.com/hamzariaz_photography"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-900 hover:bg-amber-900 hover:text-white transition-colors"
                 >
                   <FaInstagram className="w-5 h-5" />
                 </motion.a>
                 <motion.a
-                  href="#"
+                  href="mailto:Hriaz2k@gmail.com"
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-900 hover:bg-amber-900 hover:text-white transition-colors"
                 >
@@ -362,7 +368,7 @@ const PhotographerPortfolio = () => {
             >
               <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/20">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=1000&fit=crop"
+                  src={hamzasprofilepicImg}
                   alt="Hamza Riaz"
                   className="w-full h-full object-cover"
                 />
@@ -482,7 +488,7 @@ const PhotographerPortfolio = () => {
             © 2024 Hamza Riaz Photography. All rights reserved.
           </p>
           <div className="flex justify-center gap-6">
-            <a href="#" className="text-stone-400 hover:text-amber-400 transition-colors">Instagram</a>
+            <a href="https://instagram.com/hamzariaz_photography" target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-amber-400 transition-colors">Instagram</a>
             <a href="#" className="text-stone-400 hover:text-amber-400 transition-colors">Behance</a>
             <a href="mailto:Hriaz2k@gmail.com" className="text-stone-400 hover:text-amber-400 transition-colors">Email</a>
           </div>
