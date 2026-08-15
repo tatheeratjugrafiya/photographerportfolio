@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Camera, Mail, Menu, X, ChevronRight } from 'lucide-react';
+import { Camera, Mail, Menu, X, ChevronRight, Star, MessageSquare, Plus, Send, Quote, Loader2, Check } from 'lucide-react';
 import { FaInstagram } from "react-icons/fa6";
+import { supabase } from './config/supabase';
 
 // Local portfolio images
 import bikesImg from './assets/bikes.jpeg';
@@ -55,6 +56,94 @@ const PhotographerPortfolio = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newReview, setNewReview] = useState({ name: '', role: '', rating: 5, text: '' });
+  const [hoverRating, setHoverRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchInitialReviews = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        if (isMounted) {
+          setReviews(data || []);
+          setReviewsLoading(false);
+        }
+      } catch (err) {
+        console.error("Error retrieving reviews:", err);
+        if (isMounted) setReviewsLoading(false);
+      }
+    };
+
+    fetchInitialReviews();
+
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reviews'
+        },
+        (payload) => {
+          fetchInitialReviews();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      isMounted = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!newReview.name.trim() || !newReview.text.trim()) {
+      alert("Please fill in both name and review text.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .insert([
+          {
+            name: newReview.name.trim(),
+            role: newReview.role.trim() || 'Client',
+            rating: newReview.rating,
+            text: newReview.text.trim()
+          }
+        ]);
+
+      if (error) throw error;
+
+      setNewReview({ name: '', role: '', rating: 5, text: '' });
+      setSubmitSuccess(true);
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setShowAddForm(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error adding review:", error);
+      alert("Failed to submit review. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
+
   const categories = [
     'All',
     // 'Portrait',
@@ -89,7 +178,7 @@ const PhotographerPortfolio = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-10">
-              {['Work', 'About', 'Services', 'Contact'].map((item, i) => (
+              {['Work', 'About', 'Services', 'Reviews'].map((item, i) => (
                 <motion.a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -124,7 +213,7 @@ const PhotographerPortfolio = () => {
               className="md:hidden bg-white border-t border-stone-200/50"
             >
               <div className="px-6 py-4 space-y-4">
-                {['Work', 'About', 'Services', 'Contact'].map((item) => (
+                {['Work', 'About', 'Services', 'Reviews'].map((item) => (
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
@@ -438,7 +527,243 @@ const PhotographerPortfolio = () => {
         </div>
       </section>
 
+      {/* Reviews Section */}
+      <section id="reviews" className="py-24 px-6 lg:px-12 bg-white/50 backdrop-blur-sm border-t border-b border-stone-100">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <span className="text-amber-700 tracking-widest text-sm font-light mb-4 block">
+              TESTIMONIALS
+            </span>
+            <h2 className="font-serif text-5xl md:text-7xl text-stone-900 mb-6 tracking-tight">
+              What Clients <span className="italic text-amber-800">Say</span>
+            </h2>
+            <p className="text-stone-600 text-lg font-light max-w-2xl mx-auto">
+              Real stories and feedback from clients who have trusted me with their special moments
+            </p>
+          </motion.div>
+
+          <div className="flex justify-center mb-12">
+            <motion.button
+              onClick={() => {
+                setShowAddForm(!showAddForm);
+                setSubmitSuccess(false);
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-3 bg-white text-stone-700 border border-stone-200 rounded-full font-light tracking-wide flex items-center gap-2 hover:border-amber-700 hover:text-amber-900 transition-colors shadow-sm cursor-pointer"
+            >
+              {showAddForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              {showAddForm ? 'Close Form' : 'Write a Review'}
+            </motion.button>
+          </div>
+
+          <AnimatePresence>
+            {showAddForm && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, y: -20 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="overflow-hidden mb-16 max-w-2xl mx-auto"
+              >
+                <div className="bg-white rounded-2xl p-8 md:p-10 border border-stone-100 shadow-xl shadow-stone-900/5">
+                  {submitSuccess ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center py-8"
+                    >
+                      <div className="w-16 h-16 bg-amber-100 text-amber-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Check className="w-8 h-8" />
+                      </div>
+                      <h3 className="font-serif text-2xl text-stone-900 mb-2">Thank you so much!</h3>
+                      <p className="text-stone-600 font-light">Your review has been shared and published in real-time.</p>
+                    </motion.div>
+                  ) : (
+                    <form onSubmit={handleReviewSubmit} className="space-y-6">
+                      <h3 className="font-serif text-2xl text-stone-900 mb-4 tracking-tight border-b border-stone-100 pb-4">
+                        Share Your Experience
+                      </h3>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-stone-600 text-sm font-light mb-2">Your Name *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g., Emily Watson"
+                            value={newReview.name}
+                            onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                            className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:border-amber-700 font-light text-stone-900 transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-stone-600 text-sm font-light mb-2">Role / Occasion</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Portrait Client, Wedding Guest"
+                            value={newReview.role}
+                            onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
+                            className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:border-amber-700 font-light text-stone-900 transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-stone-600 text-sm font-light mb-2">Rating *</label>
+                        <div className="flex gap-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setNewReview({ ...newReview, rating: star })}
+                              onMouseEnter={() => setHoverRating(star)}
+                              onMouseLeave={() => setHoverRating(0)}
+                              className="text-stone-300 hover:scale-110 transition-transform focus:outline-none cursor-pointer"
+                            >
+                              <Star
+                                className={`w-8 h-8 ${star <= (hoverRating || newReview.rating)
+                                  ? 'text-amber-500 fill-amber-500'
+                                  : 'text-stone-200'
+                                  }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-stone-600 text-sm font-light mb-2">Your Review *</label>
+                        <textarea
+                          required
+                          rows={4}
+                          placeholder="Tell us what you loved about working together..."
+                          value={newReview.text}
+                          onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                          className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:border-amber-700 font-light text-stone-900 transition-colors resize-none"
+                        />
+                      </div>
+
+                      <div className="flex justify-end gap-4 border-t border-stone-100 pt-6">
+                        <button
+                          type="button"
+                          onClick={() => setShowAddForm(false)}
+                          className="px-6 py-3 border border-stone-200 rounded-full text-stone-600 font-light tracking-wide hover:bg-stone-50 transition-colors cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="px-8 py-3 bg-amber-900 text-white rounded-full font-light tracking-wide flex items-center gap-2 hover:bg-amber-950 transition-all shadow-lg shadow-amber-900/10 disabled:bg-stone-400 disabled:shadow-none cursor-pointer"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4" />
+                              Submit Review
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Reviews List */}
+          {reviewsLoading ? (
+            <div className="flex flex-col items-center justify-center py-20 text-stone-500">
+              <Loader2 className="w-8 h-8 animate-spin text-amber-700 mb-4" />
+              <p className="font-light">Loading client reviews...</p>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-2xl border border-stone-100 p-8 shadow-sm">
+              <MessageSquare className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+              <h3 className="font-serif text-2xl text-stone-900 mb-2">No reviews yet</h3>
+              <p className="text-stone-500 font-light mb-6">Be the first to share your experience working with me!</p>
+              {!showAddForm && (
+                <button
+                  onClick={() => setShowAddForm(true)}
+                  className="px-6 py-3 bg-amber-900 text-white rounded-full font-light tracking-wide hover:bg-amber-950 transition-colors shadow-md cursor-pointer"
+                >
+                  Write the First Review
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {reviews.map((review, index) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                  className="bg-white rounded-2xl p-8 shadow-xl shadow-stone-900/5 hover:shadow-2xl hover:shadow-stone-900/10 transition-all border border-stone-100 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Stars */}
+                    <div className="flex gap-1 mb-6 text-amber-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < review.rating ? 'fill-amber-500 text-amber-500' : 'text-stone-200'
+                            }`}
+                        />
+                      ))}
+                    </div>
+
+                    <Quote className="w-10 h-10 text-amber-100 mb-4" />
+
+                    <p className="text-stone-600 font-light leading-relaxed mb-6 italic">
+                      "{review.text}"
+                    </p>
+                  </div>
+
+                  <div className="border-t border-stone-100 pt-6 flex items-center justify-between">
+                    <div>
+                      <h4 className="font-serif text-lg text-stone-900">
+                        {review.name}
+                      </h4>
+                      <p className="text-xs text-amber-800 font-light tracking-wider uppercase">
+                        {review.role}
+                      </p>
+                    </div>
+                    {review.created_at ? (
+                      <span className="text-xs text-stone-400 font-light">
+                        {new Date(review.created_at).toLocaleDateString([], {
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-stone-400 font-light">Just now</span>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      </section>
+
       {/* Contact Section */}
+
       {/* <section id="contact" className="py-24 px-6 lg:px-12 bg-gradient-to-br from-amber-50 to-stone-50">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div

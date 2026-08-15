@@ -7,4 +7,6 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  envPrefix: ['VITE_', 'apiKey', 'authDomain', 'projectId', 'storageBucket', 'appId', 'measurementId', 'supabaseUrl', 'supabaseAnonKey']
 })
+
