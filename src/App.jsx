@@ -366,18 +366,18 @@ const PhotographerPortfolio = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/20">
+              <div className="h-fit">
                 <img
                   src={hamzasprofilepicImg}
                   alt="Hamza Riaz"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-3xl -translate-y-[29px] bg-green-500"
                 />
               </div>
-              <motion.div
+              {/* <motion.div
                 animate={{ y: [0, -20, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -bottom-8 -right-8 w-32 h-32 bg-amber-400 rounded-full blur-2xl opacity-50"
-              />
+              /> */}
             </motion.div>
           </div>
         </div>
