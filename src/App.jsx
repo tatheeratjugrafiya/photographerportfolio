@@ -3,17 +3,47 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Camera, Mail, Menu, X, ChevronRight } from 'lucide-react';
 import { FaInstagram } from "react-icons/fa6";
 
-// Sample portfolio data
+// Local portfolio images
+import bikesImg from './assets/bikes.jpeg';
+import bikes2Img from './assets/bikes2.jpeg';
+import bikes3Img from './assets/bikes3.jpeg';
+import bikes4Img from './assets/bikes4.jpeg';
+import bikes5Img from './assets/bikes5.jpeg';
+import carsImg from './assets/cars.jpeg';
+import coupleImg from './assets/couple.jpeg';
+import couple1Img from './assets/couple1.jpeg';
+import event1Img from './assets/event1.jpeg';
+import event2Img from './assets/event2.jpeg';
+import event3Img from './assets/event3.jpeg';
+import event4Img from './assets/event4.jpeg';
+import event5Img from './assets/event5.jpeg';
+import event6Img from './assets/event6.jpeg';
+import event7Img from './assets/event7.jpeg';
+import event8Img from './assets/event8.jpeg';
+import event9Img from './assets/event9.jpeg';
+import event10Img from './assets/event10.jpeg';
+import modelPhotoshootImg from './assets/modelphotoshoot.jpeg';
+
 const portfolioImages = [
-  { id: 1, url: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=1000&fit=crop', category: 'Portrait', title: 'Urban Stories' },
-  { id: 2, url: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&h=1000&fit=crop', category: 'Landscape', title: 'Mountain Serenity' },
-  { id: 3, url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&h=1000&fit=crop', category: 'Fashion', title: 'Minimalist Elegance' },
-  { id: 4, url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop', category: 'Portrait', title: 'Natural Light' },
-  { id: 5, url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1000&fit=crop', category: 'Landscape', title: 'Golden Hour' },
-  { id: 6, url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1000&fit=crop', category: 'Fashion', title: 'Modern Grace' },
-  { id: 7, url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=1000&fit=crop', category: 'Portrait', title: 'Studio Sessions' },
-  { id: 8, url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1000&fit=crop', category: 'Landscape', title: 'Horizon Dreams' },
-  { id: 9, url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&h=1000&fit=crop', category: 'Fashion', title: 'Street Style' },
+  { id: 1, url: coupleImg, category: 'Portrait', title: 'Golden Hour Couple' },
+  { id: 2, url: couple1Img, category: 'Portrait', title: 'Forest Embrace' },
+  { id: 3, url: modelPhotoshootImg, category: 'Fashion', title: 'Urban Elegance' },
+  { id: 4, url: bikesImg, category: 'Automotive', title: 'Urban Cruiser' },
+  // { id: 5, url: bikes2Img, category: 'Automotive', title: 'Urban Cruiser' },
+  // { id: 6, url: bikes3Img, category: 'Automotive', title: 'Sunset Ride' },
+  // { id: 7, url: bikes4Img, category: 'Automotive', title: 'Desert Biking' },
+  // { id: 8, url: bikes5Img, category: 'Automotive', title: 'Mountain Trail Ride' },
+  { id: 9, url: carsImg, category: 'Automotive', title: 'Classic Sports Car' },
+  { id: 10, url: event1Img, category: 'Events', title: 'Wedding Reception Decor' },
+  { id: 11, url: event2Img, category: 'Events', title: 'Grand Venue Setup' },
+  { id: 12, url: event3Img, category: 'Events', title: 'Candlelit Dinner Event' },
+  { id: 13, url: event4Img, category: 'Events', title: 'Wedding' },
+  { id: 14, url: event5Img, category: 'Events', title: 'Babyshower' },
+  { id: 15, url: event6Img, category: 'Events', title: 'Rustic Outdoor Reception' },
+  // { id: 16, url: event7Img, category: 'Events', title: 'Cocktail Gala Setting' },
+  // { id: 17, url: event8Img, category: 'Events', title: 'Table Settings & Details' },
+  // { id: 18, url: event9Img, category: 'Events', title: 'Gala Lighting Setup' },
+  { id: 19, url: event10Img, category: 'Events', title: 'Modern Reception Hall' },
 ];
 
 const PhotographerPortfolio = () => {
@@ -24,7 +54,14 @@ const PhotographerPortfolio = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
-  const categories = ['All', 'Portrait', 'Landscape', 'Fashion'];
+  const categories = [
+    'All',
+    // 'Portrait',
+    // 'Landscape', // Commented down as no data exists for this filter in the new images
+    'Fashion',
+    'Events',
+    'Automotive'
+  ];
 
   const filteredImages = selectedCategory === 'All'
     ? portfolioImages
@@ -136,7 +173,7 @@ const PhotographerPortfolio = () => {
             transition={{ duration: 1, delay: 0.6, ease: [0.6, 0.05, 0.01, 0.9] }}
             className="text-xl md:text-2xl text-stone-600 font-light max-w-2xl mx-auto mb-12 leading-relaxed"
           >
-            Award-winning photographer specializing in editorial portraits,
+            Aspiring photographer specializing in editorial portraits,
             fashion photography, and cinematic landscapes
           </motion.p>
 
@@ -155,13 +192,13 @@ const PhotographerPortfolio = () => {
               <ChevronRight className="w-4 h-4" />
             </motion.button>
 
-            <motion.button
+            {/* <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 border-2 border-stone-300 text-stone-900 rounded-full font-light tracking-wide hover:border-amber-700 hover:text-amber-700 transition-colors"
             >
               Get in Touch
-            </motion.button>
+            </motion.button> */}
           </motion.div>
         </motion.div>
 
@@ -222,11 +259,10 @@ const PhotographerPortfolio = () => {
                 onClick={() => setSelectedCategory(category)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`px-8 py-3 rounded-full font-light tracking-wide transition-all ${
-                  selectedCategory === category
-                    ? 'bg-amber-900 text-white shadow-lg shadow-amber-900/20'
-                    : 'bg-white text-stone-700 border border-stone-200 hover:border-amber-700'
-                }`}
+                className={`px-8 py-3 rounded-full font-light tracking-wide transition-all ${selectedCategory === category
+                  ? 'bg-amber-900 text-white shadow-lg shadow-amber-900/20'
+                  : 'bg-white text-stone-700 border border-stone-200 hover:border-amber-700'
+                  }`}
               >
                 {category}
               </motion.button>
@@ -292,12 +328,12 @@ const PhotographerPortfolio = () => {
                 Creating Art Through the Lens
               </h2>
               <p className="text-stone-600 text-lg leading-relaxed mb-6 font-light">
-                With over a decade of experience, I've dedicated my life to capturing
-                the beauty in everyday moments and transforming them into timeless memories.
+                As an aspiring photographer, I am dedicated to capturing the beauty in everyday
+                moments and transforming them into timeless visual memories.
               </p>
               <p className="text-stone-600 text-lg leading-relaxed mb-8 font-light">
-                My work has been featured in Vogue, National Geographic, and Elle Magazine.
-                I believe in the power of visual storytelling to connect, inspire, and evoke emotion.
+                Based in Hamilton, New Zealand, I am constantly exploring new perspectives,
+                honing my craft, and learning the nuances of lighting and composition to create compelling stories.
               </p>
               <div className="flex gap-6">
                 <motion.a
@@ -397,7 +433,7 @@ const PhotographerPortfolio = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 px-6 lg:px-12 bg-gradient-to-br from-amber-50 to-stone-50">
+      {/* <section id="contact" className="py-24 px-6 lg:px-12 bg-gradient-to-br from-amber-50 to-stone-50">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -412,16 +448,28 @@ const PhotographerPortfolio = () => {
               Ready to bring your vision to life? I'd love to hear about your project
               and discuss how we can work together.
             </p>
-            <motion.button
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-12 mb-12 text-stone-850 font-light tracking-wide">
+              <a href="mailto:Hriaz2k@gmail.com" className="hover:text-amber-800 transition-colors flex items-center gap-2">
+                <span className="text-stone-500">Email:</span> Hriaz2k@gmail.com
+              </a>
+              <a href="tel:02904301280" className="hover:text-amber-800 transition-colors flex items-center gap-2">
+                <span className="text-stone-500">Phone:</span> 02904301280
+              </a>
+              <span className="flex items-center gap-2 text-stone-600">
+                <span className="text-stone-500">Location:</span> Hamilton, New Zealand
+              </span>
+            </div>
+            <motion.a
+              href="mailto:Hriaz2k@gmail.com"
               whileHover={{ scale: 1.05, backgroundColor: '#78350f' }}
               whileTap={{ scale: 0.95 }}
-              className="px-12 py-5 bg-amber-900 text-white rounded-full font-light tracking-wide text-lg shadow-xl shadow-amber-900/20"
+              className="inline-block px-12 py-5 bg-amber-900 text-white rounded-full font-light tracking-wide text-lg shadow-xl shadow-amber-900/20"
             >
               Start a Conversation
-            </motion.button>
+            </motion.a>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="py-12 px-6 lg:px-12 bg-stone-900 text-white">
@@ -436,7 +484,7 @@ const PhotographerPortfolio = () => {
           <div className="flex justify-center gap-6">
             <a href="#" className="text-stone-400 hover:text-amber-400 transition-colors">Instagram</a>
             <a href="#" className="text-stone-400 hover:text-amber-400 transition-colors">Behance</a>
-            <a href="#" className="text-stone-400 hover:text-amber-400 transition-colors">Email</a>
+            <a href="mailto:Hriaz2k@gmail.com" className="text-stone-400 hover:text-amber-400 transition-colors">Email</a>
           </div>
         </div>
       </footer>
